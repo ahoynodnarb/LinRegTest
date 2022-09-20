@@ -1,5 +1,5 @@
-from matplotlib import pyplot as plt
-import numpy as np
+# import numpy as np
+import csv
 
 
 def h(a, b, x):
@@ -25,7 +25,7 @@ def d_intercept(predictions, expectations, n):
 
 def gradient_descent(inputs, expectations):
     a = b = 0
-    iterations = 5000
+    iterations = 50000
     n = len(inputs)
     learning_rate = 0.0001
     prev_cost = -1
@@ -37,15 +37,18 @@ def gradient_descent(inputs, expectations):
             b_d = d_slope(predictions, expectations, inputs, n)
             a = a - learning_rate * a_d
             b = b - learning_rate * b_d
+
     return (a, b)
 
 
-data = np.genfromtxt("data.csv", delimiter=",", dtype=np.int32)
-x = [d[0] for d in data[1:]]
-y = [d[1] for d in data[1:]]
-output = gradient_descent(x, y)
-print(f"a = {output[0]} b = {output[1]}")
-reg = [h(output[0], output[1], x[i]) for i in range(len(x))]
-plt.plot(x, y, color="blue")
-plt.plot(x, reg, color="red")
-plt.show()
+with open("data.csv", "r") as fin:
+    reader = csv.reader(fin, quoting=csv.QUOTE_NONNUMERIC, delimiter=",")
+    x = []
+    y = []
+    next(reader, None)
+    for row in reader:
+        x.append(row[0])
+        y.append(row[1])
+
+    output = gradient_descent(x, y)
+    print(f"h = {output[0]}x + {output[1]}")
